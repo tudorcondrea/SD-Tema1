@@ -15,5 +15,16 @@ int main(void)
         argNum = get_command(cmd);
         exec_command(sysList, cmd);
     }
+    int n = sysList->size;
+    dll_node_t *q = sysList->head;
+    for (int i = 0; i < n; i++)
+    {
+        dll_node_t *delNode = q;
+        dll_free(&((planet_info*)q->data)->shields);
+        q = q->next;
+        free(delNode->data);
+        free(delNode);
+    }
+    free(sysList);
     return 0;
 }

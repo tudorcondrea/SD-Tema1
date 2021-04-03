@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-int getCommand(char cmds[10][50])
+int get_command(char cmds[10][50])
 {
     char cmdLine[101];
     int n = 0;
@@ -25,7 +25,6 @@ void exec_command(doubly_linked_list_t *sysList, char cmd[10][50])
     if (strcmp(cmd[0], "ADD") == 0)
     {
         strcpy(planet.name, cmd[1]);
-        printf("aici");
         planet.kills = 0;
         planet.shields = NULL;
         add_planet(sysList, atoi(cmd[2]), atoi(cmd[3]), planet);
@@ -33,6 +32,30 @@ void exec_command(doubly_linked_list_t *sysList, char cmd[10][50])
     else if (strcmp(cmd[0], "BLH") == 0)
     {
         blackhole(sysList, atoi(cmd[1]));
+    }
+    else if (strcmp(cmd[0], "UPG") == 0)
+    {
+        upgrade_shields(sysList, atoi(cmd[1]), atoi(cmd[2]), atoi(cmd[3]));
+    }
+    else if (strcmp(cmd[0], "EXP") == 0)
+    {
+        expand(sysList, atoi(cmd[1]), atoi(cmd[2]));
+    }
+    else if (strcmp(cmd[0], "RMV") == 0)
+    {
+        remove_shields(sysList, atoi(cmd[1]), atoi(cmd[2]));
+    }
+    else if (strcmp(cmd[0], "COL") == 0)
+    {
+        collide(sysList, atoi(cmd[1]), atoi(cmd[2]));
+    }
+    else if (strcmp(cmd[0], "ROT") == 0)
+    {
+        rotate_shields(sysList, atoi(cmd[1]), cmd[2][0], atoi(cmd[3]));
+    }
+    else if (strcmp(cmd[0], "SHW") == 0)
+    {
+        print_details(sysList, atoi(cmd[1]));
     }
 }
 
@@ -134,7 +157,9 @@ void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2)
         si2->kills++;
     }
     else
-        *(int*)sq1->data--;
+    {
+        *(int*)sq1->data -= 1;
+    }
     if (*(int*)sq2->data == 0)
     {
         printf("Planet %s has imploded!\n", si2->name);
@@ -142,7 +167,9 @@ void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2)
         si1->kills++;
     }
     else
-        *(int*)sq2->data--;
+    {
+        *(int*)sq2->data -= 1;
+    }
 }
 
 void rotate_shields(doubly_linked_list_t *sysList, unsigned int index, char dir, unsigned int units)
@@ -174,6 +201,24 @@ void print_details(doubly_linked_list_t *sysList, unsigned int index)
         printf("Planet out of bounds!\n");
         return;
     }
-    planet_info planet = *((planet_info*)dll_get_nth_node(sysList, index)->data);
-    printf("NAME: %s\n");
+    planet_info planetMain = *((planet_info*)dll_get_nth_node(sysList, index)->data), planetPrev, planetNext;
+    printf("NAME: %s\nCLOSEST: ", planetMain.name);
+    if (sysList->size == 1)
+    {
+        printf("none\n");
+    }
+    else if (sysList->size == 2)
+    {
+        planetNext = *((planet_info*)dll_get_nth_node(sysList, index + 1)->data);
+        printf("%s\n", planetNext.name);
+    }
+    else
+    {
+        planetNext = *((planet_info*)dll_get_nth_node(sysList, index + 1)->data);
+        planetPrev = *((planet_info*)dll_get_nth_node(sysList, index - 1)->data);
+        printf("%s and %s\n", planetNext.name, planetPrev.name);
+    }
+    printf("SHIELDS: ");
+    dll_print_ints_right_circular(planetMain.shields->head);
+    printf("KILLED: %d\n", planetMain.kills);
 }

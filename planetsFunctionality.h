@@ -13,5 +13,7 @@ void blackhole(doubly_linked_list_t *sysList, unsigned int index);
 void exec_command(doubly_linked_list_t *sysList, char cmd[10][50]);
 void upgrade_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex, unsigned int upgval);
 void expand(doubly_linked_list_t *sysList, unsigned int index, unsigned int shval);
+void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2);
 void remove_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex);
 void rotate_shields(doubly_linked_list_t *sysList, unsigned int index, char dir, unsigned int units);
+void print_details(doubly_linked_list_t *sysList, unsigned int index);
