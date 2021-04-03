@@ -10,7 +10,7 @@
  * (Setare valori initiale pentru campurile specifice structurii LinkedList).
  */
 doubly_linked_list_t*
-dll_create(unsigned int data_size)
+dll_create(int data_size)
 {
     doubly_linked_list_t * list = malloc(sizeof(doubly_linked_list_t));
     DIE(list == NULL, "Couldn't allocate memory\n");
@@ -28,13 +28,14 @@ dll_create(unsigned int data_size)
  * afla pozitia dorita fara sa simulam intreaga parcurgere? Daca n < 0, eroare.
  */
 dll_node_t*
-dll_get_nth_node(doubly_linked_list_t* list, unsigned int n)
+dll_get_nth_node(doubly_linked_list_t* list, int n)
 {
     if (n < 0)
         return NULL;
     n %= list->size;
     dll_node_t * q = list->head;
-    for (int i = 0; i < n; i++)
+    int i;
+    for (i = 0; i < n; i++)
         q = q->next;
     return q;
 }
@@ -49,7 +50,7 @@ dll_get_nth_node(doubly_linked_list_t* list, unsigned int n)
  * adaugam nodul nou la finalul listei. Daca n < 0, eroare.
  */
 void
-dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data)
+dll_add_nth_node(doubly_linked_list_t* list, int n, const void* data)
 {
     if (n < 0)
     {
@@ -58,6 +59,7 @@ dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data)
     if (n >= list->size)
         n = list->size;
     dll_node_t * new_node = malloc(sizeof(dll_node_t));
+    int i;
     DIE(new_node == NULL, "Couldn't allocate memory\n");
     new_node->data = malloc(list->data_size);
     DIE(new_node->data == NULL, "Couldn't allocate memory\n");
@@ -81,7 +83,7 @@ dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data)
     else
     {
         dll_node_t * q = list->head;
-        for (int i = 0; i < n - 1; i++)
+        for (i = 0; i < n - 1; i++)
             q = q->next;
         new_node->prev = q;
         new_node->next = q->next;
@@ -100,7 +102,7 @@ dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data)
  * elibereze memoria acestui nod.
  */
 dll_node_t*
-dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n)
+dll_remove_nth_node(doubly_linked_list_t* list, int n)
 {
     if (n < 0)
         return NULL;
@@ -109,6 +111,7 @@ dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n)
     if (list->size == 0)
         return NULL;
     dll_node_t * ret_node, * q;
+    int i;
     if (n == 0)
     {
         ret_node = list->head;
@@ -119,7 +122,7 @@ dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n)
     else
     {
         q = list->head;
-        for (int i = 0; i < n - 1; i++)
+        for (i = 0; i < n - 1; i++)
             q = q->next;
         ret_node = q->next;
         q->next = q->next->next;
@@ -133,7 +136,7 @@ dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n)
  * Functia intoarce numarul de noduri din lista al carei pointer este trimis ca
  * parametru.
  */
-unsigned int
+int
 dll_get_size(doubly_linked_list_t* list)
 {
     return list->size;
@@ -147,7 +150,8 @@ void
 dll_free(doubly_linked_list_t** pp_list)
 {
     dll_node_t * q = (*pp_list)->head;
-    for (int i = 0; i < (*pp_list)->size; i++)
+    int i;
+    for (i = 0; i < (*pp_list)->size; i++)
     {
         (*pp_list)->head = (*pp_list)->head->next;
         free(q->data);
@@ -166,7 +170,8 @@ void
 dll_print_int_list(doubly_linked_list_t* list)
 {
     dll_node_t *q = list->head;
-    for (int i = 0; i < list->size; i++)
+    int i;
+    for (i = 0; i < list->size; i++)
     {
         printf("%d ", *(int*)q->data);
         q = q->next;

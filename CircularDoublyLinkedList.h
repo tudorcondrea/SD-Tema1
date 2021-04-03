@@ -13,8 +13,8 @@ typedef struct doubly_linked_list_t doubly_linked_list_t;
 struct doubly_linked_list_t
 {
     dll_node_t* head;
-    unsigned int data_size;
-    unsigned int size;
+    int data_size;
+    int size;
 };
 
 /*
@@ -23,18 +23,18 @@ struct doubly_linked_list_t
  */
 
 doubly_linked_list_t*
-dll_create(unsigned int data_size);
+dll_create(int data_size);
 
 dll_node_t*
-dll_get_nth_node(doubly_linked_list_t* list, unsigned int n);
+dll_get_nth_node(doubly_linked_list_t* list, int n);
 
 void
-dll_add_nth_node(doubly_linked_list_t* list, unsigned int n, const void* data);
+dll_add_nth_node(doubly_linked_list_t* list, int n, const void* data);
 
 dll_node_t*
-dll_remove_nth_node(doubly_linked_list_t* list, unsigned int n);
+dll_remove_nth_node(doubly_linked_list_t* list, int n);
 
-unsigned int
+int
 dll_get_size(doubly_linked_list_t* list);
 
 void

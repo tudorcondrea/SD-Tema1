@@ -8,12 +8,12 @@ struct planet_info{
 typedef struct planet_info planet_info;
 
 int get_command(char cmd[10][50]);
-void add_planet(doubly_linked_list_t *sysList, unsigned int index, unsigned int shieldNum, planet_info info);
-void blackhole(doubly_linked_list_t *sysList, unsigned int index);
+void add_planet(doubly_linked_list_t *sysList, int index, int shieldNum, planet_info info);
+void blackhole(doubly_linked_list_t *sysList, int index);
 void exec_command(doubly_linked_list_t *sysList, char cmd[10][50]);
-void upgrade_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex, unsigned int upgval);
-void expand(doubly_linked_list_t *sysList, unsigned int index, unsigned int shval);
-void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2);
-void remove_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex);
-void rotate_shields(doubly_linked_list_t *sysList, unsigned int index, char dir, unsigned int units);
-void print_details(doubly_linked_list_t *sysList, unsigned int index);
+void upgrade_shields(doubly_linked_list_t *sysList, int pindex, int sindex, int upgval);
+void expand(doubly_linked_list_t *sysList, int index, int shval);
+void collide(doubly_linked_list_t *sysList, int p1, int p2);
+void remove_shields(doubly_linked_list_t *sysList, int pindex, int sindex);
+void rotate_shields(doubly_linked_list_t *sysList, int index, char dir, int units);
+void print_details(doubly_linked_list_t *sysList, int index);

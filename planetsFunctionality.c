@@ -59,7 +59,7 @@ void exec_command(doubly_linked_list_t *sysList, char cmd[10][50])
     }
 }
 
-void add_planet(doubly_linked_list_t * sysList, unsigned int index, unsigned int shieldNum, planet_info info)
+void add_planet(doubly_linked_list_t * sysList, int index, int shieldNum, planet_info info)
 {
     if (index > sysList->size)
     {
@@ -69,13 +69,13 @@ void add_planet(doubly_linked_list_t * sysList, unsigned int index, unsigned int
     dll_add_nth_node(sysList, index, &info);
     dll_node_t *planet = dll_get_nth_node(sysList, index);
     ((planet_info*)planet->data)->shields = dll_create(sizeof(int));
-    int a = 1;
-    for (int i = 0; i < shieldNum; i++)
+    int a = 1, i;
+    for (i = 0; i < shieldNum; i++)
         dll_add_nth_node(((planet_info*)planet->data)->shields, i, &a);
     printf("The planet %s has joined the galaxy\n", ((planet_info*)planet->data)->name);
 }
 
-void blackhole(doubly_linked_list_t *sysList, unsigned int index)
+void blackhole(doubly_linked_list_t *sysList, int index)
 {
     if (index >= sysList->size)
     {
@@ -89,7 +89,7 @@ void blackhole(doubly_linked_list_t *sysList, unsigned int index)
     free(planet);
 }
 
-void upgrade_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex, unsigned int upgval)
+void upgrade_shields(doubly_linked_list_t *sysList, int pindex, int sindex, int upgval)
 {
     if (pindex >= sysList->size)
     {
@@ -107,7 +107,7 @@ void upgrade_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigne
     *(int*)q->data += upgval;
 }
 
-void expand(doubly_linked_list_t *sysList, unsigned int index, unsigned int shval)
+void expand(doubly_linked_list_t *sysList, int index, int shval)
 {
     if (index >= sysList->size)
     {
@@ -119,7 +119,7 @@ void expand(doubly_linked_list_t *sysList, unsigned int index, unsigned int shva
     dll_add_nth_node(shields, shields->size, &shval);
 }
 
-void remove_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned int sindex)
+void remove_shields(doubly_linked_list_t *sysList, int pindex, int sindex)
 {
     if (pindex >= sysList->size)
     {
@@ -138,7 +138,7 @@ void remove_shields(doubly_linked_list_t *sysList, unsigned int pindex, unsigned
     free(q);
 }
 
-void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2)
+void collide(doubly_linked_list_t *sysList, int p1, int p2)
 {
     if (p1 >= sysList->size || p2 > sysList->size)
     {
@@ -172,7 +172,7 @@ void collide(doubly_linked_list_t *sysList, unsigned int p1, unsigned int p2)
     }
 }
 
-void rotate_shields(doubly_linked_list_t *sysList, unsigned int index, char dir, unsigned int units)
+void rotate_shields(doubly_linked_list_t *sysList, int index, char dir, int units)
 {
     if (index >= sysList->size)
     {
@@ -186,15 +186,16 @@ void rotate_shields(doubly_linked_list_t *sysList, unsigned int index, char dir,
     }
     dll_node_t *q = dll_get_nth_node(sysList, index);
     doubly_linked_list_t *shields = ((planet_info*)q->data)->shields;
+    int i;
     if (dir == 'c')
-        for (int i = 0; i < units; i++)
+        for (i = 0; i < units; i++)
             shields->head = shields->head->next;
     else
-        for (int i = 0; i < units; i++)
+        for (i = 0; i < units; i++)
             shields->head = shields->head->prev;
 }
 
-void print_details(doubly_linked_list_t *sysList, unsigned int index)
+void print_details(doubly_linked_list_t *sysList, int index)
 {
     if (index >= sysList->size)
     {
