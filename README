@@ -1,1 +1,25 @@
-hello world
+Implementarea planetelor si a scuturilor folosesc liste circulare dublu inlantuite generice cu functii de manipulare de baza
+Fiecare comanda citita de la tastatura efectueaza o serie de aceste functii basic
+ADD
+    face un nod nou in galaxie pentru informatiile planetei si inceputul listei de scuturi
+    in lista de scuturi se fac <nr_scuturi> noduri initializate cu valoarea 1
+BLH
+    dezaloca memoria de la scuturi
+    elimina din lista, dar nu dezaloca memoria, asa ca o dezaloca manual
+UPG
+    sare la planeta data, dupa la scutul dat folosind dll_get si adauga <upg_val> la scutul dat
+EXP
+    adauga la pozitia shields->size un scut nou cu valoarea data
+RMV
+    scoate nodul din lista de scuturi si il dezaloca
+COl
+    verifica daca ar exploda vreo planeta inainte de a face ceva pentru a respecta ordinea afisarii in caza de explozie dubla
+    mai intai o loveste pe cea de a doua pentru a nu ameti indicii intre ei in caz ca explodeaza, dupa pe prima
+    daca nu e niciun scut 0, scade o unitate din fiecare
+    daca e vreun scut 0 foloseste functie de BLH, dar silentioasa (fara mesaj de vortex)
+ROT
+    plimba la dreapta sau la stanga capul listei de scuturi
+    daca vrea un numar de rotatii mai mare ca marimea listei, e acelasi lucru ca <nr_rot>%size, deoarece ar face oricum un ciclu complet
+SHW
+    preia atat datele de la indexul dat din galaxie, cat si vecinii sai pentru nume
+    pentru afisarea scuturilor se foloseste o afisare circulara la dreapta de la capul listei de scuturi, iar restul sunt niste campuri simple ale unei structuri
