@@ -1,3 +1,4 @@
+// Copyright 2021 Condrea Tudor-Daniel
 #include "planetsFunctionality.h"
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +9,8 @@ int get_command(char cmds[10][50])
     char cmdLine[101];
     int n = 0;
     fgets(cmdLine, 100, stdin);
-    cmdLine[strlen(cmdLine) - 1] = '\0';
+    if (cmdLine[strlen(cmdLine) - 1] == '\n')
+        cmdLine[strlen(cmdLine) - 1] = '\0';
     char * tok = strtok(cmdLine, " ");
     while (tok != NULL)
     {
@@ -31,7 +33,7 @@ void exec_command(doubly_linked_list_t *sysList, char cmd[10][50])
     }
     else if (strcmp(cmd[0], "BLH") == 0)
     {
-        blackhole(sysList, atoi(cmd[1]));
+        blackhole(sysList, atoi(cmd[1]), 1);
     }
     else if (strcmp(cmd[0], "UPG") == 0)
     {
@@ -59,7 +61,8 @@ void exec_command(doubly_linked_list_t *sysList, char cmd[10][50])
     }
 }
 
-void add_planet(doubly_linked_list_t * sysList, int index, int shieldNum, planet_info info)
+void add_planet(doubly_linked_list_t * sysList, int index,
+                int shieldNum, planet_info info)
 {
     if (index > sysList->size)
     {
@@ -72,10 +75,11 @@ void add_planet(doubly_linked_list_t * sysList, int index, int shieldNum, planet
     int a = 1, i;
     for (i = 0; i < shieldNum; i++)
         dll_add_nth_node(((planet_info*)planet->data)->shields, i, &a);
-    printf("The planet %s has joined the galaxy\n", ((planet_info*)planet->data)->name);
+    printf("The planet %s has joined the galaxy.\n",
+          ((planet_info*)planet->data)->name);
 }
 
-void blackhole(doubly_linked_list_t *sysList, int index)
+void blackhole(doubly_linked_list_t *sysList, int index, int s)
 {
     if (index >= sysList->size)
     {
@@ -83,13 +87,18 @@ void blackhole(doubly_linked_list_t *sysList, int index)
         return;
     }
     dll_node_t *planet = dll_remove_nth_node(sysList, index);
-    printf("The planet %s has been eaten by the Vortex\n", ((planet_info*)planet->data)->name);
-    dll_free(&((planet_info*)planet->data)->shields);
+    doubly_linked_list_t *shields;
+    shields = ((planet_info*)planet->data)->shields;
+    if (s == 1)
+        printf("The planet %s has been eaten by the vortex.\n",
+              ((planet_info*)planet->data)->name);
+    dll_free(&shields);
     free(planet->data);
     free(planet);
 }
 
-void upgrade_shields(doubly_linked_list_t *sysList, int pindex, int sindex, int upgval)
+void upgrade_shields(doubly_linked_list_t *sysList,
+                     int pindex, int sindex, int upgval)
 {
     if (pindex >= sysList->size)
     {
@@ -133,6 +142,11 @@ void remove_shields(doubly_linked_list_t *sysList, int pindex, int sindex)
         printf("Shield out of bounds!\n");
         return;
     }
+    if (shields->size == 4)
+    {
+        printf("A planet cannot have less than 4 shields!\n");
+        return;
+    }
     q = dll_remove_nth_node(shields, sindex);
     free(q->data);
     free(q);
@@ -140,7 +154,7 @@ void remove_shields(doubly_linked_list_t *sysList, int pindex, int sindex)
 
 void collide(doubly_linked_list_t *sysList, int p1, int p2)
 {
-    if (p1 >= sysList->size || p2 > sysList->size)
+    if (p1 >= sysList->size || p2 >= sysList->size)
     {
         printf("Planet out of bounds!\n");
         return;
@@ -148,31 +162,39 @@ void collide(doubly_linked_list_t *sysList, int p1, int p2)
     dll_node_t *q = dll_get_nth_node(sysList, p1);
     planet_info *si1 = (planet_info*)q->data;
     planet_info *si2 = (planet_info*)q->next->data;
-    dll_node_t *sq1 = dll_get_nth_node(si1->shields, si1->shields->size / 4);
-    dll_node_t *sq2 = dll_get_nth_node(si2->shields, (si2->shields->size / 4) * 3);
+    dll_node_t *sq1 = dll_get_nth_node(si1->shields,
+                                       si1->shields->size / 4);
+    dll_node_t *sq2 = dll_get_nth_node(si2->shields,
+                                      (si2->shields->size / 4) * 3);
+    int explodedFirst = 0;
     if (*(int*)sq1->data == 0)
-    {
-        printf("Planet %s has imploded!\n", si1->name);
-        blackhole(sysList, p1);
-        si2->kills++;
-    }
-    else
-    {
-        *(int*)sq1->data -= 1;
-    }
+        printf("The planet %s has imploded.\n", si1->name);
+    if (*(int*)sq2->data == 0)
+        printf("The planet %s has imploded.\n", si2->name);
     if (*(int*)sq2->data == 0)
     {
-        printf("Planet %s has imploded!\n", si2->name);
-        blackhole(sysList, p2);
+        blackhole(sysList, p2, 0);
+        explodedFirst = 1;
         si1->kills++;
     }
     else
     {
         *(int*)sq2->data -= 1;
     }
+    if (*(int*)sq1->data == 0)
+    {
+        blackhole(sysList, p1, 0);
+        if (explodedFirst == 0)
+            si2->kills++;
+    }
+    else
+    {
+        *(int*)sq1->data -= 1;
+    }
 }
 
-void rotate_shields(doubly_linked_list_t *sysList, int index, char dir, int units)
+void rotate_shields(doubly_linked_list_t *sysList,
+                    int index, char dir, int units)
 {
     if (index >= sysList->size)
     {
@@ -187,12 +209,17 @@ void rotate_shields(doubly_linked_list_t *sysList, int index, char dir, int unit
     dll_node_t *q = dll_get_nth_node(sysList, index);
     doubly_linked_list_t *shields = ((planet_info*)q->data)->shields;
     int i;
+    units %= shields->size;
     if (dir == 'c')
-        for (i = 0; i < units; i++)
-            shields->head = shields->head->next;
-    else
+    {
         for (i = 0; i < units; i++)
             shields->head = shields->head->prev;
+    }
+    else
+    {
+        for (i = 0; i < units; i++)
+            shields->head = shields->head->next;
+    }
 }
 
 void print_details(doubly_linked_list_t *sysList, int index)
@@ -202,7 +229,9 @@ void print_details(doubly_linked_list_t *sysList, int index)
         printf("Planet out of bounds!\n");
         return;
     }
-    planet_info planetMain = *((planet_info*)dll_get_nth_node(sysList, index)->data), planetPrev, planetNext;
+    planet_info planetMain, planetPrev, planetNext;
+    dll_node_t *q;
+    planetMain = *((planet_info*)dll_get_nth_node(sysList, index)->data);
     printf("NAME: %s\nCLOSEST: ", planetMain.name);
     if (sysList->size == 1)
     {
@@ -210,14 +239,17 @@ void print_details(doubly_linked_list_t *sysList, int index)
     }
     else if (sysList->size == 2)
     {
-        planetNext = *((planet_info*)dll_get_nth_node(sysList, index + 1)->data);
+        q = dll_get_nth_node(sysList, index + 1);
+        planetNext = *((planet_info*)q->data);
         printf("%s\n", planetNext.name);
     }
     else
     {
-        planetNext = *((planet_info*)dll_get_nth_node(sysList, index + 1)->data);
-        planetPrev = *((planet_info*)dll_get_nth_node(sysList, index - 1)->data);
-        printf("%s and %s\n", planetNext.name, planetPrev.name);
+        q = dll_get_nth_node(sysList, index + 1);
+        planetNext = *((planet_info*)q->data);
+        q = dll_get_nth_node(sysList, index - 1);
+        planetPrev = *((planet_info*)q->data);
+        printf("%s and %s\n", planetPrev.name, planetNext.name);
     }
     printf("SHIELDS: ");
     dll_print_ints_right_circular(planetMain.shields->head);

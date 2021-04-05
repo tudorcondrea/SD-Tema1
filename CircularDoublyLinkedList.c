@@ -1,3 +1,4 @@
+// Copyright 2021 Condrea Tudor-Daniel
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,7 +32,7 @@ dll_node_t*
 dll_get_nth_node(doubly_linked_list_t* list, int n)
 {
     if (n < 0)
-        return NULL;
+        n = list->size + n;
     n %= list->size;
     dll_node_t * q = list->head;
     int i;
